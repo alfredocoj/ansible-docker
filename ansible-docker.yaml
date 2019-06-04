@@ -1,24 +1,77 @@
+
 ---
-
-- name: Install Docker and Docker Compose on Fedora
-  hosts: all
-  become: true
-
+- name: Install development packages
+  hosts: localhost
+  become: True
   tasks:
-    - name: Upgrade all packages
-      dnf: name=* state=latest
+    - name: upgrade all packages
+      package:
+        name: "*"
+        state: latest
+
+    - name: install development packages
+      package: name={{ item }}
+               state=present
+      with_items:
+        - ack
+        - autoconf
+        - automake
+        - bison
+        - bzip2
+        - curl
+        - emacs
+        - gcc-c++
+        - git
+        - gmp-devel
+        - htop
+        - libbsd-devel
+        - libedit-devel
+        - libevent-devel
+        - libffi-devel
+        - libtool
+        - libselinux-python
+        - libxml2-devel
+        - libyaml-devel
+        - llvm-static
+        - make
+        - mariadb-devel
+        - openssl-devel
+        - patch
+        - pgadmin3
+        - postgresql-devel
+        - readline-devel
+        - redhat-rpm-config
+        - ruby-devel
+        - svn
+        - tmux
+        - tree
+        - util-linux-user
+        - vim
+        - xclip
+        - zlib-devel
+        - openssh-server
+    
+    - name: Enable service sshd, and not touch the state
+      service:
+        name: sshd
+        enabled: yes
+
+    - name: Restart service sshd, in all cases
+      service:
+        name: sshd
+        state: restarted
 
     - name: Check if Docker is installed
       command: systemctl status docker
       register: docker_check
       ignore_errors: yes
 
-#    - name: Download the Docker installer
-#      get_url:
-#        url: https://get.docker.com/
-#        dest: /root/install_docker.sh
-#        mode: 0700
-#      when: docker_check.stderr.find('service could not be found') != -1
+    - name: Download the Docker installer
+      get_url:
+        url: https://get.docker.com/
+        dest: /root/install_docker.sh
+        mode: 0700
+      when: docker_check.stderr.find('service could not be found') != -1
 
     - name: Install Docker
       shell: /root/install_docker.sh nightly
@@ -54,3 +107,10 @@
       when:
         - docker_compose_check.msg is defined
         - docker_compose_check.msg.find('No such file or directory') != -1
+
+    - name: Add the user 'alfredo' with a bash shell, appending the group 'admins' and 'developers' to the user's groups
+      user:
+        name: alfredo
+        shell: /bin/bash
+        groups: root,docker
+        append: yes
