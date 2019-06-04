@@ -2,6 +2,12 @@
 
 Ansible playbook para docker.
 
+## COMMANDS
+
+```
+$ sudo ansible-playbook ansible-developer.yaml
+```
+
 ## REFERÊNCIAS
 
 https://sudo-science.com/setting-up-fedora-28-using-ansible/
