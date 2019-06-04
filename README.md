@@ -8,7 +8,7 @@ Ansible playbook para docker.
 $ sudo ansible-playbook ansible-developer.yaml
 ```
 
-## REFERÊNCIAS
+## REFERENCES
 
 https://sudo-science.com/setting-up-fedora-28-using-ansible/
 
